@@ -1,0 +1,46 @@
+module top_module(
+    input clk,
+    input areset,    // Asynchronous reset to OFF
+    input j,
+    input k,
+    output out); //  
+
+    parameter OFF=0, ON=1; 
+    reg present_state, next_state;
+
+   //Assignment Block 
+    always @(*) begin
+        case(present_state)
+            ON : if (k == 1)
+                    next_state <= OFF;
+                else
+                    next_state <= ON;
+            OFF : if (j == 1)
+                    next_state <= ON;
+                  else
+                    next_state <= OFF;
+            default : next_state <= OFF;
+        endcase
+                
+    end
+
+    //Reset Block
+    always @(posedge clk, posedge areset) begin
+        // State flip-flops with asynchronous reset
+        if (areset)
+            present_state <= OFF;
+        else
+            present_state <= next_state;
+    end
+
+    // Output logic Block
+    // assign out = (state == ...);
+
+    always@(*)begin
+        case (present_state)
+            ON : out = 1;
+            OFF : out = 0;
+        endcase
+    end
+    
+endmodule
