@@ -1,0 +1,41 @@
+module top_module(
+    input clk,
+    input areset,    // Asynchronous reset to state B
+    input in,
+    output reg out
+);  
+
+    // State declaration
+    parameter A = 1'b0, B = 1'b1;
+    reg state, next_state;
+
+    // Combinational logic for next state and output
+    always @(*) begin    
+        case(state)
+            B: begin
+                out = 1; // Output for state B
+                if (in) 
+                    next_state = B; // Stay in B
+                else 
+                    next_state = A; // Transition to A
+            end
+            A: begin
+                out = 0; // Output for state A
+                if (in) 
+                    next_state = A; // Stay in A
+                else 
+                    next_state = B; // Transition to B
+            end
+            default: next_state = B; // Default to state B
+        endcase
+    end
+
+    // Sequential logic for state transition
+    always @(posedge clk or posedge areset) begin
+        if (areset)
+            state <= B;  // Asynchronously reset to state B
+        else
+            state <= next_state;  // Transition to the next state
+    end
+
+endmodule
